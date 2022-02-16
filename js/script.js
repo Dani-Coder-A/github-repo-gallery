@@ -2,19 +2,21 @@
 const profileInfo = document.querySelector(".overview");
 //This global variable points towards my GitHub username
 const username = "Dani-Coder-A";
+//This global variable targets the unordered list of repos
+const repoList = document.querySelector(".repo-list"); 
 
 //Create an Async Function to fetch API JSON data
-const getData = async function () {
-const resp = await fetch (`https://api.github.com/users/${username}`);
-const data = await resp.json();
-console.log(data);
-displayProfileInfo(data);
+const getUserInfo = async function () {
+    const userInfo = await fetch (`https://api.github.com/users/${username}`);
+    const data = await userInfo.json();
+    //console.log(data);
+    displayUserInfo(data);
 };
 
-getData();
+getUserInfo();
 
 //Create a Function to fetch & display user information
-const displayProfileInfo = function (data) {
+const displayUserInfo = function (data) {
     const div = document.createElement("div");
     div.classList.add("user-info");
     div.innerHTML = `
@@ -29,4 +31,25 @@ const displayProfileInfo = function (data) {
     </div>
     `;
     profileInfo.append(div);
+    getRepoInfo()
+};
+
+//Create an Async Function to fetch the repos
+const getRepoInfo = async function () {
+    const repoInfo = await fetch (`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`);
+    const repoData = await repoInfo.json();
+    //console.log(repoData);
+    displayRepoInfo(repoData);
+};
+
+//Create a Function to display info about each repo
+const displayRepoInfo = function (repos) {
+    for(const repo of repos) {
+        const li = document.createElement("li");
+        li.classList.add("repo");
+        li.innerHTML = `
+        <h3>${repo.name}</h3>
+        `;
+        repoList.append(li);
+    }
 };
