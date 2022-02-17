@@ -8,6 +8,10 @@ const repoList = document.querySelector(".repo-list");
 const allRepoInfo = document.querySelector(".repos");
 //This global variable targets individual repo information (currently hidden)
 const individualRepoInfo = document.querySelector(".repo-data");
+//This global variable targets the Back to Repo Gallery button
+const button = document.querySelector(".view-repos");
+//This global variable targets the search input box 
+const filterInput = document.querySelector(".filter-repos");
 
 //Create an Async Function to fetch API JSON data
 const getUserInfo = async function () {
@@ -48,6 +52,7 @@ const gitRepos = async function () {
 
 //Create a Function to display info about each repo
 const displayRepos = function (repos) {
+    filterInput.classList.remove("hide");
     for(const repo of repos) {
         const li = document.createElement("li");
         li.classList.add("repo");
@@ -78,7 +83,7 @@ const getRepoInfo = async function (repoName) {
     const languageData = await fetchLanguages.json();
     //console.log(languageData);
 
-    //Add languages to empty array
+    //Add languages to empty array 
     const languages = [];
     for(const language in languageData) {
         languages.push(language);
@@ -101,4 +106,28 @@ const displayRepoInfo = function (repoInfo, languages) {
     individualRepoInfo.append(div);
     individualRepoInfo.classList.remove("hide");
     allRepoInfo.classList.add("hide");
+    button.classList.remove("hide");
 };
+
+//Add a click event for the Back to Repo Gallery button
+button.addEventListener("click", function () {
+    allRepoInfo.classList.remove("hide");
+    individualRepoInfo.classList.add("hide");
+    button.classList.add("hide");
+})
+
+//Add an input event listener for the search input box
+filterInput.addEventListener("input", function (e) {
+    const searchText = e.target.value;
+    //console.log(searchText);
+    const repos = document.querySelectorAll(".repo");
+    const searchLowerText = searchText.toLowerCase();
+
+    for(const repo of repos) {
+        const repoLowerText = repo.innerText.toLowerCase();
+        if(repoLowerText.includes(searchLowerText)) {
+        repo.classList.remove("hide");
+        }
+        else {repo.classList.add("hide");}
+    }
+});
